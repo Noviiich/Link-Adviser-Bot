@@ -37,6 +37,7 @@ func (c Consumer) Start() error {
 			continue
 		}
 
+		//организация параллельной обработки, исп sync.WaurtGroup{}
 		if err := c.handleEvents(gotEvents); err != nil {
 			log.Print(err)
 

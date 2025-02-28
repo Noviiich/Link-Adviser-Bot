@@ -69,10 +69,6 @@ func (p *Processor) sendRandom(ctx context.Context, chatID int, username string)
 	defer func() { err = e.WrapIfErr("can't do command: can't sand random", err) }()
 
 	page, err := p.storage.PickRandom(ctx, username)
-	if err != nil {
-		return err
-	}
-
 	if err != nil && !errors.Is(err, storage.ErrNoSavedPages) {
 		return err
 	}
