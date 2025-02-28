@@ -8,7 +8,6 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/Noviiich/Link-Adviser-Bot/lib/e"
 	"github.com/Noviiich/Link-Adviser-Bot/storage"
@@ -68,12 +67,11 @@ func (s Storage) PickRandom(_ context.Context, username string) (p *storage.Page
 		return nil, storage.ErrNoSavedPages
 	}
 
-	rand.Seed(time.Now().UnixNano())
 	n := rand.Intn(len(files))
 
 	file := files[n]
 
-	return s.decodePage(filepath.Join(s.basePath, file.Name()))
+	return s.decodePage(filepath.Join(path, file.Name()))
 }
 
 func (s Storage) Remove(_ context.Context, p *storage.Page) error {

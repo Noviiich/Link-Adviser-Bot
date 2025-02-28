@@ -89,7 +89,7 @@ func (p *Processor) sendRandom(ctx context.Context, chatID int, username string)
 }
 
 func (p *Processor) sendHelp(ctx context.Context, chatId int) error {
-	return p.tg.SendMessage(ctx, chatId, msgHello)
+	return p.tg.SendMessage(ctx, chatId, msgHelp)
 }
 
 func (p *Processor) sendHello(ctx context.Context, chatID int) error {
