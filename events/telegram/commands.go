@@ -20,7 +20,7 @@ const (
 func (p *Processor) doCmd(ctx context.Context, text string, chatID int, username string) error {
 	text = strings.TrimSpace(text)
 
-	log.Printf("got new command '%s' from '%s'", text, username)
+	log.Printf("got new command '%s' from '%s", text, username)
 
 	if isAddCmd(text) {
 		return p.savePage(ctx, chatID, text, username)
@@ -39,19 +39,19 @@ func (p *Processor) doCmd(ctx context.Context, text string, chatID int, username
 }
 
 func (p *Processor) savePage(ctx context.Context, chatID int, pageURL string, username string) (err error) {
-	defer func() { e.WrapIfErr("can't do command: savePage", err) }()
+	defer func() { err = e.WrapIfErr("can't do command: save page", err) }()
 
 	page := &storage.Page{
 		URL:      pageURL,
 		UserName: username,
 	}
 
-	isExists, err := p.storage.IsExist(ctx, page)
+	isExists, err := p.storage.IsExists(ctx, page)
 	if err != nil {
 		return err
 	}
 	if isExists {
-		p.tg.SendMessage(ctx, chatID, msgAlreadyExists)
+		return p.tg.SendMessage(ctx, chatID, msgAlreadyExists)
 	}
 
 	if err := p.storage.Save(ctx, page); err != nil {
@@ -66,13 +66,12 @@ func (p *Processor) savePage(ctx context.Context, chatID int, pageURL string, us
 }
 
 func (p *Processor) sendRandom(ctx context.Context, chatID int, username string) (err error) {
-	defer func() { err = e.WrapIfErr("can't do command: can't sand random", err) }()
+	defer func() { err = e.WrapIfErr("can't do command: can't send random", err) }()
 
 	page, err := p.storage.PickRandom(ctx, username)
 	if err != nil && !errors.Is(err, storage.ErrNoSavedPages) {
 		return err
 	}
-
 	if errors.Is(err, storage.ErrNoSavedPages) {
 		return p.tg.SendMessage(ctx, chatID, msgNoSavedPages)
 	}
@@ -84,8 +83,8 @@ func (p *Processor) sendRandom(ctx context.Context, chatID int, username string)
 	return p.storage.Remove(ctx, page)
 }
 
-func (p *Processor) sendHelp(ctx context.Context, chatId int) error {
-	return p.tg.SendMessage(ctx, chatId, msgHelp)
+func (p *Processor) sendHelp(ctx context.Context, chatID int) error {
+	return p.tg.SendMessage(ctx, chatID, msgHelp)
 }
 
 func (p *Processor) sendHello(ctx context.Context, chatID int) error {

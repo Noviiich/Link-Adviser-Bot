@@ -14,7 +14,7 @@ type Storage interface {
 	Save(ctx context.Context, p *Page) error
 	PickRandom(ctx context.Context, username string) (*Page, error)
 	Remove(ctx context.Context, p *Page) error
-	IsExist(ctx context.Context, p *Page) (bool, error)
+	IsExists(ctx context.Context, p *Page) (bool, error)
 }
 
 type Page struct {

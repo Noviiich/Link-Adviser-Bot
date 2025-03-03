@@ -90,7 +90,7 @@ func (s Storage) Remove(_ context.Context, p *storage.Page) error {
 	return nil
 }
 
-func (s Storage) IsExist(_ context.Context, p *storage.Page) (bool, error) {
+func (s Storage) IsExists(_ context.Context, p *storage.Page) (bool, error) {
 	fileName, err := fileName(p)
 	if err != nil {
 		return false, e.Wrap("can't check if file exists", err)

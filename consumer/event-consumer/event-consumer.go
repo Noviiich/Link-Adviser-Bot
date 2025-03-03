@@ -9,15 +9,15 @@ import (
 )
 
 type Consumer struct {
-	processor events.Processor
 	fetcher   events.Fetcher
+	processor events.Processor
 	batchSize int
 }
 
-func New(f events.Fetcher, p events.Processor, batchSize int) *Consumer {
-	return &Consumer{
-		fetcher:   f,
-		processor: p,
+func New(fetcher events.Fetcher, processor events.Processor, batchSize int) Consumer {
+	return Consumer{
+		fetcher:   fetcher,
+		processor: processor,
 		batchSize: batchSize,
 	}
 }
@@ -37,8 +37,7 @@ func (c Consumer) Start() error {
 			continue
 		}
 
-		//организация параллельной обработки, исп sync.WaurtGroup{}
-		if err := c.handleEvents(gotEvents); err != nil {
+		if err := c.handleEvents(context.Background(), gotEvents); err != nil {
 			log.Print(err)
 
 			continue
@@ -46,11 +45,11 @@ func (c Consumer) Start() error {
 	}
 }
 
-func (c Consumer) handleEvents(events []events.Event) error {
+func (c *Consumer) handleEvents(ctx context.Context, events []events.Event) error {
 	for _, event := range events {
 		log.Printf("got new event: %s", event.Text)
 
-		if err := c.processor.Process(context.Background(), event); err != nil {
+		if err := c.processor.Process(ctx, event); err != nil {
 			log.Printf("can't handle event: %s", err.Error())
 
 			continue
